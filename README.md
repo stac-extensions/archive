@@ -1,14 +1,13 @@
 # Template Extension Specification
 
-- **Title:** Template
-- **Identifier:** <https://stac-extensions.github.io/template/v1.0.0/schema.json>
-- **Field Name Prefix:** template
+- **Title:** Archive
+- **Identifier:** <https://stac-extensions.github.io/archive/v1.0.0/schema.json>
+- **Field Name Prefix:** archive
 - **Scope:** Item, Collection
 - **Extension [Maturity Classification](https://github.com/radiantearth/stac-spec/tree/master/extensions/README.md#extension-maturity):** Proposal
-- **Owner**: @your-gh-handles @person2
+- **Owner**: @m-mohr, @constantinius
 
-This document explains the Template Extension to the [SpatioTemporal Asset Catalog](https://github.com/radiantearth/stac-spec) (STAC) specification.
-This is the place to add a short introduction.
+This extension deals with cases when files are not directly accessible on their respective storage, but are part of an archive file, such as ZIP or TAR archives. This extension deals with the details of referencing the archive file and the file inside, relative to the archives root.
 
 - Examples:
   - [Item example](examples/item.json): Shows the basic usage of the extension in a STAC Item
@@ -16,45 +15,37 @@ This is the place to add a short introduction.
 - [JSON Schema](json-schema/schema.json)
 - [Changelog](./CHANGELOG.md)
 
-## Fields
+## *Asset / Link Object* fields
 
 The fields in the table below can be used in these parts of STAC documents:
 - [ ] Catalogs
-- [x] Collections
-- [x] Item Properties (incl. Summaries in Collections)
+- [ ] Collections
+- [ ] Item Properties (incl. Summaries in Collections)
 - [x] Assets (for both Collections and Items, incl. Item Asset Definitions in Collections)
-- [ ] Links
+- [x] Links
 
 | Field Name           | Type                      | Description |
 | -------------------- | ------------------------- | ----------- |
-| template:new_field   | string                    | **REQUIRED**. Describe the required field... |
-| template:xyz         | [XYZ Object](#xyz-object) | Describe the field... |
-| template:another_one | \[number]                 | Describe the field... |
+| archive:href         | string                    | The location of the file within the archive specified by the `href` field |
+| archive:format       | string                    | The mimetype of the archive format |
+| archive:type         | string                    | The mimetype of the file within the archive specified by the `href` field |
+| archive:start        | integer                   | The offset of the first byte of the file within the archive |
+| archive:end          | integer                   | The offset of the last byte of the file within the archive |
 
 ### Additional Field Information
 
-#### template:new_field
+#### archive:href
 
-This is a much more detailed description of the field `template:new_field`...
+This is a relative or absolute path to locate the assets or linked file within the archive.
 
-### XYZ Object
+## Roles
 
-This is the introduction for the purpose and the content of the XYZ Object...
+The following roles should be used as applicable `roles` types in the
+[Asset Object](https://github.com/radiantearth/stac-spec/tree/master/item-spec/item-spec.md#asset-object).
 
-| Field Name  | Type   | Description |
-| ----------- | ------ | ----------- |
-| x           | number | **REQUIRED**. Describe the required field... |
-| y           | number | **REQUIRED**. Describe the required field... |
-| z           | number | **REQUIRED**. Describe the required field... |
-
-## Relation types
-
-The following types should be used as applicable `rel` types in the
-[Link Object](https://github.com/radiantearth/stac-spec/tree/master/item-spec/item-spec.md#link-object).
-
-| Type                | Description |
+| Role                | Description |
 | ------------------- | ----------- |
-| fancy-rel-type      | This link points to a fancy resource. |
+| archive             | This role is to be used when referencing files that are used as an archive. |
 
 ## Contributing
 
