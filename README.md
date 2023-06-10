@@ -1,4 +1,4 @@
-# Template Extension Specification
+# Archive Extension Specification
 
 - **Title:** Archive
 - **Identifier:** <https://stac-extensions.github.io/archive/v1.0.0/schema.json>
