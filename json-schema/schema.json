@@ -181,7 +181,6 @@
       },
       "patternProperties": {
         "^(?!archive:)": {
-          "$comment": "Above, change `template` to the prefix of this extension"
         }
       },
       "additionalProperties": false
