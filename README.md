@@ -87,7 +87,7 @@ Example:
 ```json
 {
   "assets": {
-    "archive": {
+    "example": {
       "href": "example.tar.gz",
       "type": "application/gz",
       "roles": ["data"],
