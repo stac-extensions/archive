@@ -2,8 +2,8 @@
 
 - **Title:** Archive
 - **Identifier:** <https://stac-extensions.github.io/archive/v1.0.0/schema.json>
-- **Field Name Prefix:** archive
-- **Scope:** Item, Collection
+- **Field Name Prefix:** -
+- **Scope:** Item, Collection, Catalog
 - **Extension [Maturity Classification](https://github.com/radiantearth/stac-spec/tree/master/extensions/README.md#extension-maturity):** Proposal
 - **Owner**: @m-mohr
 
@@ -13,8 +13,8 @@ This extension deals with the details of referencing the archive file and the fi
 relative to the archives root.
 
 - Examples:
-  - [Item example](examples/item.json): Shows the basic usage of the extension in a STAC Item
-  - [Collection example](examples/collection.json): Shows the basic usage of the extension in a STAC Collection
+  - [STAC Item](examples/item.json)
+  - [STAC Collection](examples/collection.json)
 - [JSON Schema](json-schema/schema.json)
 - [Changelog](./CHANGELOG.md)
 
@@ -48,7 +48,7 @@ The following fields from the STAC specification are commonly provided:
 | roles       | \[string]         | The roles of the file within the archive. |
 | range       | \[integer]        | The byte location of the file within the archive, e.g. for HTTP range requests. |
 | title       | string            | The title of the file within the archive. |
-| description | string            | The title of the file within the archive. |
+| description | string            | The description of the file within the archive. |
 | bands       | \[Band Object]    | If applicable, the bands of the file within the archive. |
 | archive     | \[Archive Object] | If applicable, for double nesting of archives (see below). |
 
@@ -56,11 +56,11 @@ Note: The `href` is OPTIONAL in `item_assets`.
 
 The following example fields from other extensions could be useful:
 
-| Field Name    | Type       | Description                                                | Extension |
-| ------------- | ---------- | ---------------------------------------------------------- | --------- | 
-| file:size     | integer    | The uncompressed file size of the file within the archive. | [File](https://github.com/stac-extensions/file) |
-| file:checksum | string     | The checksum of the uncompressed file in the archive.      | [File](https://github.com/stac-extensions/file) |
-| ...           | ...        | ...                                                        | ... |
+| Field Name    | Type    | Description                                                | Extension |
+| ------------- | ------- | ---------------------------------------------------------- | --------- | 
+| file:size     | integer | The uncompressed file size of the file within the archive. | [File](https://github.com/stac-extensions/file) |
+| file:checksum | string  | The checksum of the uncompressed file in the archive.      | [File](https://github.com/stac-extensions/file) |
+| ...           | ...     | ...                                                        | ... |
 
 #### range
 
@@ -115,9 +115,9 @@ Example:
 The following roles should be used as applicable `roles` types in the
 [Asset Object](https://github.com/radiantearth/stac-spec/tree/master/item-spec/item-spec.md#asset-object).
 
-| Role                | Description |
-| ------------------- | ----------- |
-| archive             | This role is used when an entity provides the files both archived and extracted. In this case, the additional archive file provides this role. This is to avoid downloading files both as archive and extracted. |
+| Role    | Description |
+| ------- | ----------- |
+| archive | This role is used when an entity provides the files both archived and extracted. In this case, the additional archive file provides this role. This is to avoid downloading files both as archive and extracted. |
 
 ## Contributing
 
