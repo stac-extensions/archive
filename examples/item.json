@@ -1,5 +1,5 @@
 {
-  "stac_version": "1.0.0",
+  "stac_version": "1.1.0",
   "stac_extensions": [
     "https://stac-extensions.github.io/archive/v1.0.0/schema.json"
   ],
@@ -48,18 +48,41 @@
     }
   ],
   "assets": {
-    "data": {
-      "href": "https://example.com/examples/file.zip",
-      "type": "application/zip",
-      "archive:href": "data/image.tif",
-      "archive:type": "image/tiff"
+    "example": {
+      "href": "example.csv",
+      "type": "text/csv",
+      "roles": [
+        "data"
+      ],
+      "file:size": 123456789
     },
-    "data2": {
-      "href": "https://example.com/examples/archive.tar.bz2",
-      "type": "application/x-bzip2",
-      "archive:format": "application/x-tar",
-      "archive:href": "data/image.tif",
-      "archive:type": "image/tiff"
+    "archive": {
+      "href": "example.tar.gz",
+      "type": "application/gz",
+      "roles": [
+        "data",
+        "archive"
+      ],
+      "file:size": 1234567,
+      "archive": [
+        {
+          "href": "example.tar",
+          "type": "application/x-tar",
+          "roles": [
+            "data"
+          ],
+          "archive": [
+            {
+              "href": "example.csv",
+              "type": "text/csv",
+              "roles": [
+                "data"
+              ],
+              "file:size": 123456789
+            }
+          ]
+        }
+      ]
     }
   }
 }

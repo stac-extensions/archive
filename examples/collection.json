@@ -1,7 +1,6 @@
 {
-  "stac_version": "1.0.0",
+  "stac_version": "1.1.0",
   "stac_extensions": [
-    "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
     "https://stac-extensions.github.io/archive/v1.0.0/schema.json"
   ],
   "type": "Collection",
@@ -32,18 +31,28 @@
   "assets": {
     "example": {
       "href": "https://example.com/examples/file.zip",
+      "title": "Example Zip File",
+      "type": "application/zip",
       "roles": [
-        "archive"
-      ]
-    }
-  },
-  "item_assets": {
-    "data": {
-      "roles": [
-        "data",
-        "archive"
+        "data"
       ],
-      "archive:format": "application/x-tar"
+      "file:size": 1234567,
+      "archive": [
+        {
+          "href": "https://example.com/examples/file.tif",
+          "type": "image/tiff; application=geotiff",
+          "roles": [
+            "data"
+          ],
+          "range": [
+            1000,
+            987654
+          ],
+          "file:size": 123456789,
+          "nodata": 0,
+          "data_type": "uint16"
+        }
+      ]
     }
   },
   "summaries": {

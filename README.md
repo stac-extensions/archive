@@ -5,7 +5,7 @@
 - **Field Name Prefix:** archive
 - **Scope:** Item, Collection
 - **Extension [Maturity Classification](https://github.com/radiantearth/stac-spec/tree/master/extensions/README.md#extension-maturity):** Proposal
-- **Owner**: @m-mohr, @constantinius
+- **Owner**: @m-mohr
 
 This extension deals with cases when files are not directly accessible on their
 respective storage, but are part of an archive file, such as ZIP or TAR archives.
@@ -18,50 +18,97 @@ relative to the archives root.
 - [JSON Schema](json-schema/schema.json)
 - [Changelog](./CHANGELOG.md)
 
-## *Asset / Link Object* fields
+## Fields
 
 The fields in the table below can be used in these parts of STAC documents:
+
 - [ ] Catalogs
 - [ ] Collections
 - [ ] Item Properties (incl. Summaries in Collections)
 - [x] Assets (for both Collections and Items, incl. Item Asset Definitions in Collections)
 - [x] Links
 
-| Field Name           | Type                      | Description |
-| -------------------- | ------------------------- | ----------- |
-| archive:href         | string                    | The location of the file within the archive specified by the `href` field |
-| archive:format       | string                    | The mimetype of the archive format |
-| archive:type         | string                    | The mimetype of the file within the archive specified by the `href` field |
-| archive:start        | integer                   | The offset of the first byte of the file within the archive |
-| archive:end          | integer                   | The offset of the last byte of the file within the archive |
+| Field Name | Type              | Description |
+| ---------- | ----------------- | ----------- |
+| archive    | \[Archive Object] | A list of 1+ (relevant) files within the archive. |
 
-### Additional Field Information
+Note: The `archive` array can be empty in `item_assets`.
 
-#### archive:href
+### Archive Object
 
-This is a relative or absolute path to locate the assets or linked file within the archive.
+This object works like a normal Asset or Link, all properties that can be used in an
+Asset Object or Link Object can also be provided in the Archive Object, including `archive` itself.
 
-#### archive:format
+The following fields from the STAC specification are commonly provided:
 
-This defines the canonical format of the archive. This can be different as the
-asset/links `type`, as this may only refer to the outermost compression used.
-For example, TAR files are uncompressed by themselves, so they are usually
-wrapped in a compressed file format like gzip (`.gz`) resulting in a filename
-`myarchive.tar.gz`. In that example the `type` would be `application/gz` whereas
-the `archive:format` would be `application/x-tar`.
+| Field Name  | Type              | Description |
+| ----------- | ----------------- | ----------- |
+| href        | string            | **REQUIRED.** The relative (to the archive root) or absolute path of the file within the archive. |
+| type        | string            | The media type of the file within the archive. |
+| roles       | \[string]         | The roles of the file within the archive. |
+| range       | \[integer]        | The byte location of the file within the archive, e.g. for HTTP range requests. |
+| title       | string            | The title of the file within the archive. |
+| description | string            | The title of the file within the archive. |
+| bands       | \[Band Object]    | If applicable, the bands of the file within the archive. |
+| archive     | \[Archive Object] | If applicable, for double nesting of archives (see below). |
 
-#### archive:type
+Note: The `href` is OPTIONAL in `item_assets`.
 
-This describes the mimetype of the file within the archive. The same rules and
-semantics as with the `type` property apply here as well.
+The following example fields from other extensions could be useful:
 
-#### archive:start and archive:end
+| Field Name    | Type       | Description                                                | Extension |
+| ------------- | ---------- | ---------------------------------------------------------- | --------- | 
+| file:size     | integer    | The uncompressed file size of the file within the archive. | [File](https://github.com/stac-extensions/file) |
+| file:checksum | string     | The checksum of the uncompressed file in the archive.      | [File](https://github.com/stac-extensions/file) |
+| ...           | ...        | ...                                                        | ... |
 
-These properties would describe the byte-location of the file within the
-archive. This would only be useful if the archive is uncompressed and the files
-are stored in a single continuous block. A reader could make use of that
-information to directly read this portion of the archive to have direct access
-to the file.
+#### range
+
+This property describes the byte location of the file within the archive.
+This would only be useful if the files are stored in a single continuous block.
+A reader could make use of that information to directly read this portion of
+the archive to have direct access to the file, e.g. on the file system or
+through HTTP Range requests.
+It is a two-element array of zero-based offset of the first and last byte (inclusive)
+of the file within the archive.
+The values are meant to be provided in a way that they can be used in HTTP
+Range requests without a change.
+
+Note: All other fields are defined in the STAC specification or in STAC extensions,
+while range is a new field defined only in this extension at this point.
+
+## Double nested archive formats
+
+"Double" archives such as `tar.gz` (i.e. a TAR file within a GZIP file)
+must be provided as `archive` within an Archive Object.
+
+Example:
+
+```json
+{
+  "assets": {
+    "archive": {
+      "href": "example.tar.gz",
+      "type": "application/gz",
+      "roles": ["data"],
+      "archive": [
+        {
+          "href": "example.tar",
+          "type": "application/x-tar",
+          "roles": ["data"],
+          "archive": [
+            {
+              "href": "example.csv",
+              "type": "text/csv",
+              "roles": ["data"],
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
 
 ## Roles
 
@@ -70,7 +117,7 @@ The following roles should be used as applicable `roles` types in the
 
 | Role                | Description |
 | ------------------- | ----------- |
-| archive             | This role is to be used when referencing files that are used as an archive. |
+| archive             | This role is used when an entity provides the files both archived and extracted. In this case, the additional archive file provides this role. This is to avoid downloading files both as archive and extracted. |
 
 ## Contributing
 
@@ -87,11 +134,13 @@ To run tests locally, you'll need `npm`, which is a standard part of any [node.j
 
 First you'll need to install everything with npm once. Just navigate to the root of this repository and on
 your command line run:
+
 ```bash
 npm install
 ```
 
 Then to check markdown formatting and test the examples against the JSON schema, you can run:
+
 ```bash
 npm test
 ```
@@ -99,6 +148,7 @@ npm test
 This will spit out the same texts that you see online, and you can then go and fix your markdown or examples.
 
 If the tests reveal formatting problems with the examples, you can fix them with:
+
 ```bash
 npm run format-examples
 ```
